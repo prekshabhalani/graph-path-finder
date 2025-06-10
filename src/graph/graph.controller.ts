@@ -7,7 +7,7 @@ import { PathResponseDto } from './dtos/find-path-response.dto';
 @ApiTags('Graph')
 @Controller('graph')
 export class GraphController {
-    private readonly logger = new Logger(GraphController.name);
+    private readonly logger = new Logger(GraphController.name)
 
     constructor(private readonly graphService: GraphService) { }
 
@@ -17,14 +17,11 @@ export class GraphController {
     @ApiResponse({ status: 400, description: 'Invalid input or nodes' })
     @ApiResponse({ status: 404, description: 'No path exists' })
     @ApiResponse({ status: 500, description: 'Internal server error' })
-    @ApiQuery({ name: 'from', required: true })
-    @ApiQuery({ name: 'to', required: true })
     async getShortestPath(@Query() query: FindPathReqDto): Promise<PathResponseDto> {
-        const { from, to } = query;
-        this.logger.log(`Received request: from=${from}, to=${to} -> Redirecting to service`);
+        const { from, to, filePath } = query;
+        this.logger.log(`Received request: from=${from}, to=${to}, filePath=${filePath || 'default'}`)
 
-        const filePath = 'src/assets/topology.xml'; //Static
-        const path = await this.graphService.getShortestPath(query.from, query.to, filePath);
+        const path = await this.graphService.getShortestPath(from.trim(), to.trim(), filePath)
 
         return {
             success: true,

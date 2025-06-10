@@ -1,16 +1,30 @@
-// DTO for query params
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator'
 
 export class FindPathReqDto {
+  @ApiProperty({
+    description: "Starting node key",
+    example: "T/2345",
+  })
 
-    @ApiProperty({ description: 'Source node ID' })
-    @IsString()
-    @IsNotEmpty()
-    from: string;
+  @IsNotEmpty()
+  @IsString()
+  from: string
 
-    @ApiProperty({ description: 'Destination node ID' })
-    @IsString()
-    @IsNotEmpty()
-    to: string;
+  @ApiProperty({
+    description: "Ending node key",
+    example: "T/0032",
+  })
+
+  @IsNotEmpty()
+  @IsString()
+  to: string
+
+  @ApiPropertyOptional({
+    description: "Custom XML file path (optional)",
+    example: "src/assets/custom-topology.xml",
+  })
+  @IsOptional()
+  @IsString()
+  filePath?: string
 }
