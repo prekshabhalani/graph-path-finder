@@ -1,0 +1,1 @@
+// DTO for query params
