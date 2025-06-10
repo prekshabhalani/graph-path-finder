@@ -2,36 +2,69 @@
 
 import { ApiProperty } from '@nestjs/swagger'
 
-export class NodeInfoDto {
+export class PathNodeDto {
   @ApiProperty({
-    description: "Node name/key",
+    description: "The unique key of the node",
     example: "T/2345",
   })
-  name: string
+  key: string
 
   @ApiProperty({
-    description: "Node classification",
+    description: "The classification/class of the node",
     example: "Transceiver",
   })
-  class: string
+  classification: string
 }
 
 export class PathResponseDto {
   @ApiProperty({
-    description: "Whether the operation was successful",
+    description: "Whether a path was found between the nodes",
     example: true,
   })
-  success: boolean
+  pathFound: boolean
 
   @ApiProperty({
-    description: "Response message",
-    example: "Path found",
+    description: "The starting node key",
+    example: "T/2345",
+  })
+  startNode: string
+
+  @ApiProperty({
+    description: "The ending node key",
+    example: "T/0031",
+  })
+  endNode: string
+
+  @ApiProperty({
+    description: "The length of the shortest path (number of nodes)",
+    example: 5,
+    minimum: 0,
+  })
+  pathLength: number
+
+  @ApiProperty({
+    description: "The nodes in the shortest path from start to end",
+    type: [PathNodeDto],
+    example: [
+      { key: "T/2345", classification: "Transceiver" },
+      { key: "Bartrum-X5", classification: "Link" },
+      { key: "M60", classification: "Fibre" },
+      { key: "Matfold-A4", classification: "Link" },
+      { key: "T/0031", classification: "Transceiver" },
+    ],
+  })
+  path: PathNodeDto[]
+
+  @ApiProperty({
+    description: "Additional message or error details",
+    example: "Shortest path found successfully",
   })
   message: string
 
   @ApiProperty({
-    description: "Path data with node information",
-    type: [NodeInfoDto],
+    description: "Processing time in milliseconds",
+    example: 15.5,
+    required: false,
   })
-  data: NodeInfoDto[]
+  processingTimeMs?: number
 }
