@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { PathfinderModule } from './pathfinder/pathfinder.module';
+import { GraphModule } from './graph/graph.module';
 import { WinstonModule } from 'nest-winston';
 import { transports, format } from 'winston';
 
@@ -18,7 +18,7 @@ import { transports, format } from 'winston';
         ),
       }),
     ],
-  }), PathfinderModule,],
+  }), GraphModule,],
   controllers: [],
   providers: [],
 })
