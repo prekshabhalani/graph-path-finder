@@ -1,8 +1,6 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import * as fs from 'fs';
 import { XMLParser } from 'fast-xml-parser';
-import * as libxmljs from 'libxmljs2';
-import * as path from 'path';
 
 export interface ParsedGraph {
   nodes: { key: string; class: string }[];
@@ -13,6 +11,7 @@ export interface ParsedGraph {
 export class XmlParserService {
   private readonly logger = new Logger(XmlParserService.name)
   private readonly parser: XMLParser
+
   private cache = new Map<string, { data: ParsedGraph; timestamp: number }>()
   private readonly DEFAULT_TTL = 5 * 60 * 1000 // 5 minutes
 
@@ -21,30 +20,6 @@ export class XmlParserService {
       ignoreAttributes: false,
     })
     this.logger.debug('XmlParserService initialized')
-  }
-
-  /**
-   * Validates XML against the XSD schema
-   * @param xmlContent XML content to validate
-   * @returns True if valid, false otherwise
-   */
-  private validateXml(xmlContent: string): boolean {
-    try {
-      const schemaPath = path.join(process.cwd(), 'src/assets/topology.xsd')
-      if (!fs.existsSync(schemaPath)) {
-        this.logger.error(`Schema file not found: ${schemaPath}`)
-        return false
-      }
-
-      const schemaContent = fs.readFileSync(schemaPath, 'utf-8')
-      const xsdDoc = libxmljs.parseXml(schemaContent)
-      const xmlDoc = libxmljs.parseXml(xmlContent)
-
-      return xmlDoc.validate(xsdDoc)
-    } catch (error) {
-      this.logger.error(`Error validating XML: ${error.message}`)
-      return false
-    }
   }
 
   parseXml(filePath: string): ParsedGraph {
@@ -63,12 +38,6 @@ export class XmlParserService {
       }
 
       const xml = fs.readFileSync(filePath, 'utf-8')
-
-      // Validate XML against schema
-      if (!this.validateXml(xml)) {
-        throw new InternalServerErrorException('XML does not conform to the schema')
-      }
-
       const parsed = this.parser.parse(xml)
 
       if (!parsed.topology) {
@@ -109,6 +78,7 @@ export class XmlParserService {
       }
 
       const result = { nodes, edges }
+      
       this.setCached(filePath, result)
 
       this.logger.debug(`Successfully parsed ${nodes.length} nodes and ${edges.length} edges`)

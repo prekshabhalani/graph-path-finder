@@ -2,7 +2,7 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { IsNotEmpty, IsOptional, IsString, Length } from 'class-validator'
 import { Transform } from 'class-transformer'
 
-export class FindPathDto {
+export class FindPathReqDto {
   @ApiProperty({
     description: "The key of the starting node",
     example: "T/2345",
@@ -13,7 +13,7 @@ export class FindPathDto {
   @IsString()
   @Length(1, 100)
   @Transform(({ value }) => value?.trim())
-  startNode: string
+  from: string
 
   @ApiProperty({
     description: "The key of the ending node",
@@ -25,7 +25,7 @@ export class FindPathDto {
   @IsNotEmpty()
   @Length(1, 100)
   @Transform(({ value }) => value?.trim())
-  endNode: string
+  to: string
 
   @ApiPropertyOptional({
     description: "Custom XML file path (optional)",
