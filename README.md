@@ -73,21 +73,6 @@ The application can be configured using environment variables:
 
 Create a `.env` file in the root directory to set these variables.
 
-## Testing
-
-Run the test suite:
-
-\`\`\`bash
-# Unit tests
-npm test
-
-# Test coverage
-npm run test:cov
-
-# End-to-end tests
-npm run test:e2e
-\`\`\`
-
 ## Design Decisions
 
 ### Algorithm Choice
@@ -117,3 +102,6 @@ With more time, I would add:
 1. ❌ Rate limiting and authentication
 2. ❌ More sophisticated caching with Redis
 3. ❌ Performance benchmarks for large graph
+4. ❌ Support for weighted edges and Dijkstra's algorithm
+5. ❌ Test coverage of unit test end to end testing
+6. ❌ Add kafka and DB support

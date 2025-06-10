@@ -1,5 +1,5 @@
 {
-  "name": "shortest-path-nestjs",
+  "name": "shortest-path-finder",
   "version": "1.0.0",
   "description": "NestJS backend API for finding shortest paths in network topologies",
   "author": "Preksha Bhalani",
@@ -31,7 +31,9 @@
     "fast-xml-parser": "^5.2.5",
     "fs": "^0.0.1-security",
     "helmet": "^8.1.0",
+    "libxmljs2": "^0.37.0",
     "nest-winston": "^1.10.2",
+    "path": "^0.12.7",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },

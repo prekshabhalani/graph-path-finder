@@ -2,6 +2,8 @@
 import { Command } from "commander"
 import * as fs from "fs"
 import { XMLParser } from "fast-xml-parser"
+import * as libxmljs from "libxmljs2"
+import * as path from "path"
 
 // Simple CLI version of the pathfinder
 const program = new Command()
@@ -21,6 +23,26 @@ interface Graph {
   adjacencyList: Map<string, string[]>
 }
 
+// Validate XML against XSD schema
+function validateXml(xmlContent: string): boolean {
+  try {
+    const schemaPath = path.join(__dirname, "../src/assets/topology.xsd")
+    if (!fs.existsSync(schemaPath)) {
+      console.error(`Error: Schema file not found: ${schemaPath}`)
+      return false
+    }
+
+    const schemaContent = fs.readFileSync(schemaPath, "utf-8")
+    const xsdDoc = libxmljs.parseXml(schemaContent)
+    const xmlDoc = libxmljs.parseXml(xmlContent)
+
+    return xmlDoc.validate(xsdDoc)
+  } catch (error) {
+    console.error(`Error validating XML: ${error.message}`)
+    return false
+  }
+}
+
 // Parse XML file
 function parseXmlFile(filePath: string): Graph {
   try {
@@ -30,6 +52,13 @@ function parseXmlFile(filePath: string): Graph {
     }
 
     const xml = fs.readFileSync(filePath, "utf-8")
+
+    // Validate XML against schema
+    if (!validateXml(xml)) {
+      console.error("Error: XML does not conform to the schema")
+      process.exit(1)
+    }
+
     const parser = new XMLParser({ ignoreAttributes: false })
     const parsed = parser.parse(xml)
 
