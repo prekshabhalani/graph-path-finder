@@ -19,29 +19,41 @@ async function bootstrap() {
       whitelist: true,
       forbidNonWhitelisted: true,
     }),
-  );
+  )
 
-  // Security middlewares
-  app.use(helmet());
-  app.enableCors();
+  // Enable CORS for API access
+  app.enableCors({
+    origin: process.env.ALLOWED_ORIGINS?.split(',') || ['*'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: false,
+  })
 
-  // Swagger setup
+  // Global prefix for all routes
+  app.setGlobalPrefix('api/v1')
+
+  // Swagger documentation
   const config = new DocumentBuilder()
-    .setTitle('Graph Pathfinder API')
-    .setDescription('Find shortest path in a directed graph with all node details.')
+    .setTitle('Shortest Path API')
+    .setDescription('Backend API for finding shortest paths in network topologies using BFS algorithm')
     .setVersion('1.0')
-    .addTag('pathfinder')
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document);
+    .addTag('pathfinder', 'Network topology operations')
+    .addServer(process.env.API_BASE_URL || 'http://localhost:3000', 'Development server')
+    .build()
 
-  // Dynamic URL log
-  const configService = app.get(ConfigService);
-  const port = configService.get<number>('PORT') || 3000;
-  await app.listen(port);
+  const document = SwaggerModule.createDocument(app, config)
+  SwaggerModule.setup('api/docs', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+    },
+  })
 
-  const address = await app.getUrl();
-  app.get(WINSTON_MODULE_NEST_PROVIDER).log(`🚀 App is running at ${address}`);
-  app.get(WINSTON_MODULE_NEST_PROVIDER).log(`📚 API documentation available at ${address}/docs`);
+  const port = process.env.PORT || 3000
+  await app.listen(port)
+
+  console.log(`🚀 Shortest Path API is running on: http://localhost:${port}`)
+  console.log(`📚 API Documentation: http://localhost:${port}/api/docs`)
+  console.log(`🏥 Health Check: http://localhost:${port}/api/v1/topology/health`)
 }
-bootstrap();
+
+bootstrap()

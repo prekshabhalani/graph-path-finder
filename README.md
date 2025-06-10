@@ -46,8 +46,7 @@ A production-quality utility for finding the shortest path between two nodes in 
 2. Access the API at `http://localhost:3000`
 
 3. API Endpoints:
-   - `GET /graph/shortest-path?from=<node1>&to=<node2>` - Find shortest path between nodes
-   - `GET /graph/nodes` - Get all nodes in the graph
+   - `GET /api/v1/graph/shortest-path?from=<node1>&to=<node2>` - Find shortest path between nodes
 
 4. Swagger documentation is available at `http://localhost:3000/docs`
 
