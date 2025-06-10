@@ -1,6 +1,5 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
@@ -21,6 +20,7 @@ async function bootstrap() {
     }),
   )
 
+    app.use(helmet());
   // Enable CORS for API access
   app.enableCors({
     origin: process.env.ALLOWED_ORIGINS?.split(',') || ['*'],
@@ -38,7 +38,6 @@ async function bootstrap() {
     .setDescription('Backend API for finding shortest paths in network topologies using BFS algorithm')
     .setVersion('1.0')
     .addTag('pathfinder', 'Network topology operations')
-    .addServer(process.env.API_BASE_URL || 'http://localhost:3000', 'Development server')
     .build()
 
   const document = SwaggerModule.createDocument(app, config)
@@ -53,7 +52,7 @@ async function bootstrap() {
 
   console.log(`🚀 Shortest Path API is running on: http://localhost:${port}`)
   console.log(`📚 API Documentation: http://localhost:${port}/api/docs`)
-  console.log(`🏥 Health Check: http://localhost:${port}/api/v1/topology/health`)
+  console.log(`🏥 Health Check: http://localhost:${port}/api/v1/graph/health`)
 }
 
 bootstrap()
