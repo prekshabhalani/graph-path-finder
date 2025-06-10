@@ -19,17 +19,17 @@ export class GraphController {
     @ApiResponse({ status: 500, description: 'Internal server error' })
     @ApiQuery({ name: 'from', required: true })
     @ApiQuery({ name: 'to', required: true })
-
-    getShortestPath(@Query() query: FindPathReqDto): PathResponseDto {
+    async getShortestPath(@Query() query: FindPathReqDto): Promise<PathResponseDto> {
         const { from, to } = query;
         this.logger.log(`Received request: from=${from}, to=${to} -> Redirecting to service`);
 
-        const path = this.graphService.getShortestPath(query.from, query.to);
+        const filePath = 'src/assets/topology.xml'; //Static
+        const path = await this.graphService.getShortestPath(query.from, query.to, filePath);
 
         return {
             success: true,
             message: 'Path found',
-            data: [path],
+            data: path,
         };
     }
 }

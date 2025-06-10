@@ -1,6 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { XmlParserService } from '../shared/xml-parser/xml-parser.service';
-import { PathFinderService } from '../shared/pathfinder/pathfinder.service';
+import { PathfinderService } from '../shared/pathfinder/pathfinder.service';
 
 
 @Injectable()
@@ -8,16 +8,18 @@ export class GraphService {
     private readonly logger = new Logger(GraphService.name);
     constructor(
         private readonly xmlParserService: XmlParserService,
-        private readonly pathFinderService: PathFinderService,
+        private readonly pathfinderService: PathfinderService,
     ) {
     }
 
-    getShortestPath(from: string, to: string) {
-        
-        let file = ""
-        const parsedXML = this.xmlParserService.parse(file);
-        const path = this.pathFinderService.findPath(parsedXML, from, to);
-
-        return path
+    async getShortestPath(from: string, to: string, filePath: string): Promise<any> {
+        try {
+            const graph = this.xmlParserService.parseXml(filePath);
+            this.pathfinderService.buildGraph(graph);
+            return this.pathfinderService.findShortestPath(from, to);
+        } catch (error) {
+            this.logger.error(`Failed to get shortest path: ${error}`);
+            throw new HttpException(error.message, error.status);
+        }
     }
 }
