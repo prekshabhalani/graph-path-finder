@@ -4,12 +4,22 @@ import { ConfigService } from '@nestjs/config';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
 import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { ValidationPipe } from '@nestjs/common'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  //Winston for system logs
+  // Winston for system logs
   app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
+
+  // Global validation pipe
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
 
   // Security middlewares
   app.use(helmet());
@@ -25,12 +35,13 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document);
 
-  //Dynamic URL log
+  // Dynamic URL log
   const configService = app.get(ConfigService);
   const port = configService.get<number>('PORT') || 3000;
   await app.listen(port);
 
   const address = await app.getUrl();
   app.get(WINSTON_MODULE_NEST_PROVIDER).log(`🚀 App is running at ${address}`);
+  app.get(WINSTON_MODULE_NEST_PROVIDER).log(`📚 API documentation available at ${address}/docs`);
 }
 bootstrap();
