@@ -52,7 +52,7 @@ async function bootstrap() {
 
   console.log(`🚀 Shortest Path API is running on: http://localhost:${port}`)
   console.log(`📚 API Documentation: http://localhost:${port}/api/docs`)
-  console.log(`🏥 Health Check: http://localhost:${port}/api/v1/graph/health`)
+  // console.log(`🏥 Health Check: http://localhost:${port}/api/v1/graph/health`)
 }
 
 bootstrap()

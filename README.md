@@ -1,107 +1,231 @@
-# Graph Pathfinder
+```markdown
+# 🔗 Graph Shortest Pathfinder
 
-This project parses an XML-based directed graph and computes the shortest path between nodes.
+A production-quality utility to compute the **shortest path between two nodes** in a directed graph, defined via an XML topology file.
 
-> # Shortest Path Finder
-A production-quality utility for finding the shortest path between two nodes in a directed graph defined in an XML file.
+🌍 **Live Deployment**: [API Docs on Render](https://graph-path-finder.onrender.com/api/docs)
 
-## Features
+---
 
-- Finds the shortest path between two named nodes in a network
-- Returns the names and classifications of all nodes in the path
-- Provides both a REST API and a CLI interface
-- Includes caching for improved performance
-- Comprehensive error handling and logging
-- Well-tested with unit and integration tests
+## 🚀 Features
 
-## Installation
+* 🔍  **Shortest Path Finder**: BFS-based routing between two named nodes
+* 📜  **Node Classification Output**: Returns node names and classifications in the result
+* 🌐 **Dual Interface**: REST API & CLI tool
+* ⚡ **In-Memory Caching**: Fast repeat queries by avoiding re-parsing
+* 🛡️ **Robust Error Handling & Logging**: Structured exceptions and logging using NestJS best practices.
+* 🧪 **Test-Ready Architecture** : Designed for unit and E2E testability
+* 📦 **Production-Ready & Scalable**: Ready for integration and scaling
+
+---
+
+## 📁 Project Structure
+
+```bash
+graph-path-finder/
+├── src/
+│   ├── assets/               # XML topology files (example + XSD)
+│   ├── graph/
+│   │   ├── dtos/             # Request/response DTOs
+│   │   ├── interfaces/            
+│   │   ├── graph.controller.ts
+│   │   ├── graph.module.ts
+│   │   └── graph.service.ts
+│   ├── shared/
+│   │   ├── pathfinder/
+│   │   │   ├── interfaces/            
+│   │   │   └── pathfinder.service.ts
+│   │   ├── xml-parser/
+│   │   │   ├── interfaces/            
+│   │   │   └── xml-parser.service.ts
+│   │   └── catch/
+│   │       └── catch.service.ts
+│   ├── app.module.ts         # Root NestJS module
+│   └── main.ts               # Application entry point
+├── test/                     # Placeholder for E2E and integration tests
+├── dist/                     # Compiled CLI/REST output
+├── cli.ts                    # Command-line interface entry point
+├── .env.example              # Example environment configuration
+├── .eslintrc.js              # Linting rules
+├── .prettierrc               # Formatting rules
+├── package.json              # Project metadata and scripts
+└── README.md                 # Project documentation
+````
+
+---
+
+## 🛠️ Installation
 
 ### Prerequisites
 
-- Node.js (v16 or higher)
-- npm or yarn
+* Node.js (v16 or above)
+* npm or yarn
 
 ### Setup
 
-1. Clone the repository:
-   \`\`\`bash
+1. **Clone the repository**
+
+   ```bash
    git clone https://github.com/prekshabhalani/graph-path-finder.git
-   cd shortest-path-finder
-   \`\`\`
+   cd graph-path-finder
+   ```
 
-2. Install dependencies:
-   \`\`\`bash
+2. **Install dependencies**
+
+   ```bash
    npm install
-   \`\`\`
+   ```
 
-## Usage
+---
 
-### REST API
+## 🌐 REST API Usage
 
-1. Start the server:
-   \`\`\`bash
+1. **Start the server**
+
+   ```bash
    npm run start
-   \`\`\`
+   ```
 
-2. Access the API at `http://localhost:3000`
+2. **Access the API**
 
-3. API Endpoints:
-   - `GET /api/v1/graph/shortest-path?from=<node1>&to=<node2>` - Find shortest path between nodes
+   * Base URL: `http://localhost:3000`
+   * Swagger Docs: `http://localhost:3000/api/docs`
 
-4. Swagger documentation is available at `http://localhost:3000/docs`
+🌍 Live Swagger Docs: https://graph-path-finder.onrender.com/api/docs
 
-### CLI
+3. **Endpoint**
 
-The CLI tool provides a simple way to find paths directly from the command line:
+   ```
+   GET /api/v1/graph/shortest-path?from=<node1>&to=<node2>
+   ```
 
-\`\`\`bash
+---
 
-# Make the CLI executable
-chmod +x dist/cli.js
+## 🖥️ CLI Usage
 
-# Find path between two nodes
-./dist/cli.js find-path --from "T/2345" --to "T/0032" --xml "src/assets/topology.xml"
-\`\`\`
+1. **Make the CLI executable**
 
-## Configuration
+   ```bash
+   chmod +x dist/cli.js
+   ```
 
-The application can be configured using environment variables:
+2. **Run the pathfinder via CLI**
 
-- `PORT` - Server port (default: 3000)
-- `TOPOLOGY_FILE_PATH` - Default path to the XML topology file
-- `LOG_LEVEL` - Logging level (default: 'info')
+   ```bash
+   ./dist/cli.js find-path --from "T/2345" --to "T/0032" --xml "src/assets/topology.xml"
+   ```
 
-Create a `.env` file in the root directory to set these variables.
+3. **Optional: Output in JSON format**
 
-## Design Decisions
+   ```bash
+   ./dist/cli.js find-path --from "T/2345" --to "T/0032" --xml "src/assets/topology.xml" --json
+   ```
 
-### Algorithm Choice
+---
 
-The application uses Breadth-First Search (BFS) to find the shortest path in terms of the number of edges. This is optimal for unweighted graphs where each edge has the same "cost".
+## ⚙️ Configuration
 
-### Performance Optimizations
+Environment variables can be set in a `.env` file (based on `.env.example`):
 
-1. **Caching**: The XML parser implements caching to avoid repeated parsing of the same file.
-2. **Efficient Data Structures**: Using Maps for O(1) lookups of nodes and their connections.
-3. **Early Termination**: The BFS algorithm stops as soon as the target node is found.
+| Variable             | Description               | Default     |
+| -------------------- | ------------------------- | ----------- |
+| `PORT`               | Port for REST server      | `3000`      |
+| `TOPOLOGY_FILE_PATH` | Path to XML topology file | Custom path |
 
-### Error Handling
+Example `.env`:
 
-Comprehensive error handling is implemented throughout the application:
+```env
+PORT=3000
+TOPOLOGY_FILE_PATH=src/assets/topology.xml
+```
 
-- ✅ Input validation using class-validator
-- ✅ Specific error types for different failure scenarios
-- ✅ Detailed error messages for debugging
-- ✅ Proper HTTP status codes for API responses
-- ✅ API documentation and examples
+---
 
-## Future Improvements
+## 📐 Algorithm Design
 
-With more time, I would add:
+* **Algorithm**: Breadth-First Search (BFS)
+* **Why BFS?**: Ideal for **unweighted graphs** where shortest path is based on edge count.
 
-1. ❌ Rate limiting and authentication
-2. ❌ More sophisticated caching with Redis
-3. ❌ Performance benchmarks for large graph
-4. ❌ Support for weighted edges and Dijkstra's algorithm
-5. ❌ Test coverage of unit test end to end testing
-6. ❌ Add kafka and DB support
+---
+
+## ⚡ Performance Optimizations
+
+* 🧠 **Caching**: Avoids repeated parsing of the same XML file
+* 🔗 **Efficient Graph Lookup**: Uses `Map` for O(1) access
+* 🛑 **Early Exit**: BFS terminates as soon as destination is found
+
+---
+
+## 🚨 Error Handling
+
+* ✅ Input validation via `class-validator`
+* ✅ Clear and categorized exception types (`HttpException`, `NotFoundException`, etc.)
+* ✅ Descriptive error messages for debugging
+* ✅ Proper HTTP status codes and Swagger docs for all routes
+
+---
+
+## ✅ Testing
+
+> 📌 *Note: Testing setup is planned, not yet implemented.*
+
+### 🧪 Planned Test Roadmap
+
+- [ ] Unit tests for:
+  - BFS logic
+  - XML parsing
+  - Path validation
+- [ ] E2E tests for:
+  - API route `/shortest-path`
+  - CLI commands
+- [ ] Coverage reports via Jest
+- [ ] CI integration (e.g., GitHub Actions)
+
+**Future Setup:**
+
+```bash
+# Unit tests
+npm run test
+
+# Watch mode
+npm run test:watch
+
+# Test coverage
+npm run test:cov
+
+# E2E tests
+npm run test:e2e
+```
+
+**Directory Plan:**
+
+* `*.spec.ts` - Unit tests near core services
+* `test/app.e2e-spec.ts` - End-to-end integration testing
+
+---
+
+## 🔮 Future Enhancements
+
+Planned upgrades for production environments:
+
+* ⏳ **Rate Limiting & Auth**: Protect APIs from abuse
+* 🧊 **Redis Caching**: Persistent and distributed cache layer
+* 📊 **Benchmarking**: Test performance on large graphs
+* 🧭 **Weighted Graph Support**: Add Dijkstra's Algorithm
+* ✅ **Full Testing Coverage**: Unit + E2E tests with CI integration
+* 📡 **Kafka & DB Support**: For scalable data ingestion & persistence
+* 🐳 **Docker Support**: Containerization for easier deployment
+* 📈 **Monitoring & Metrics**: Observability with Prometheus/Grafana
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create your branch: `git checkout -b feature/xyz`
+3. Commit your changes: `git commit -am 'Add xyz'`
+4. Push to the branch: `git push origin feature/xyz`
+5. Submit a pull request 🎉
+
+
+```
