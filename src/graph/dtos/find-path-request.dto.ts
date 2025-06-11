@@ -29,7 +29,7 @@ export class FindPathReqDto {
 
   @ApiPropertyOptional({
     description: "Custom XML file path (optional)",
-    example: "src/assets/custom-topology.xml",
+    example: "src/assets/topology.xml",
   })
   @IsOptional()
   @IsString()
