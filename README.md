@@ -216,6 +216,7 @@ Planned upgrades for production environments:
 * 📡 **Kafka & DB Support**: For scalable data ingestion & persistence
 * 🐳 **Docker Support**: Containerization for easier deployment
 * 📈 **Monitoring & Metrics**: Observability with Prometheus/Grafana
+* 🏁 **Track All Valid Paths**: Return All Shortest Paths (Same Distance)
 
 ---
 
